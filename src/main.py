@@ -62,8 +62,10 @@ def fetch_predictions(classifier, target='tn', overwrite=False):
         preds = classifier.predict_prob(
             df.comment_text.values.tolist(),
         )
-        ndf = df[['id'] + PREDEFINED_COLUMNS].copy()
-        ndf[PREDEFINED_COLUMNS] = preds
+        ndf = pd.concat([
+            df[['id']].reset_index(drop=True),
+            pd.DataFrame(preds, columns=PREDEFINED_COLUMNS),
+        ], axis=1)
         ndf.to_csv(pred_filepath, index=False)
         return preds
 
